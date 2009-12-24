@@ -1,0 +1,24 @@
+= Introduction =
+
+Cocoa is very strict about how it operates. This means there are some changes when using the HighGUI library with Cocoa. 
+
+ # Your code must run from a secondary thread.
+ # An Info.plist file must be added to your project.
+ # Bundling your executable inside an application is preferable.
+
+Aside from the above details it all works exactly the same way.
+
+= Skeleton of an OpenCV/Cocoa project = 
+
+{{{
+#include <opencv/cv.h>
+#include <opencv/highgui.h>
+
+int myCode(int argc, char *argv[]) {
+// Your actual code goes here
+}
+
+int main(int argc, char *argv[]) {
+return cvInitSystem(argc, argv, myCode);
+}
+}}}
