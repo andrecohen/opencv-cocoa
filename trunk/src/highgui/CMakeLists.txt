@@ -112,11 +112,16 @@ if(UNIX)
 endif()
 
 if(APPLE)
-    add_definitions(-DHAVE_QUICKTIME=1 -DHAVE_CARBON=1)
+    add_definitions(-DHAVE_QUICKTIME=1 -DHAVE_CARBON=0 -DHAVE_COCOA=1)
     if(NOT OPENCV_BUILD_3RDPARTY_LIBS)
         add_definitions(-DHAVE_IMAGEIO=1)
     endif()
-    set(highgui_srcs ${highgui_srcs} window_carbon.cpp cvcap_qt.cpp)
+
+	#if(QT_FOUND)
+	#	set(highgui_srcs ${highgui_srcs} cvcap_qt.cpp)
+	#endif()
+	
+    set(highgui_srcs ${highgui_srcs} window_cocoa.mm)
 endif(APPLE)
 
 source_group("Src" FILES ${highgui_srcs} ${highgui_hdrs})
@@ -201,7 +206,7 @@ if(WIN32)
 endif()
 
 if(APPLE)
-	target_link_libraries(${the_target} "-framework Carbon -framework CoreFoundation -framework QuickTime -framework QuartzCore")
+	target_link_libraries(${the_target} "-lbz2 -framework Cocoa -framework CoreFoundation  -framework QuartzCore")
 endif()
 
 install(TARGETS ${the_target}
