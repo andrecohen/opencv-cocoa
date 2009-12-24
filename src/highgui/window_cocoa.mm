@@ -108,14 +108,16 @@ struct cvMainUserArguments {
 static int (*cvMainUserPtr)(int, char**);
 
 void *cvMainUserThread(void *arguments) {
-	NSAutoreleasePool *p = [[NSAutoreleasePool alloc] init];
+	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
 	cvMainUserArguments *args = (cvMainUserArguments *)arguments;
 
 	if(cvMainUserPtr)
 		cvMainUserPtr(args->argc, args->argv);
 	 	
-	[p release];
+	[application terminate:nil];
+	
+	[pool release];
 	return NULL;
 }
 
@@ -371,9 +373,13 @@ CV_IMPL int cvNamedWindow( const char* name, int flags )
 CV_IMPL int cvWaitKey (int maxWait)
 {
 	NSEvent *event = nil;
-	clock_t start = clock();
+	double start = [[NSDate date] timeIntervalSince1970];
 
-	while(true && (clock()-start)/CLOCKS_PER_SEC<(unsigned int)maxWait) {
+	while(true) {
+		if(([[NSDate date] timeIntervalSince1970] - start) * 100 >= maxWait && maxWait>0)
+			return -1;
+		
+		
 		event = [application currentEvent];
 		if([event type] == NSKeyDown) {
 			return [event keyCode];
@@ -419,19 +425,23 @@ CvVideoWriter* cvCreateVideoWriter_QT ( const char* filename, int fourcc,
 - (void)cvMouseEvent:(NSEvent *)event {
 	if(!mouseCallback) 
 		return;
-	if([event type] == NSLeftMouseDown)	{[self cvSendMouseEvent:event type:CV_EVENT_LBUTTONDOWN flags:CV_EVENT_FLAG_LBUTTON];}
-	if([event type] == NSLeftMouseUp)	{[self cvSendMouseEvent:event type:CV_EVENT_LBUTTONUP   flags:CV_EVENT_FLAG_LBUTTON];}
-	if([event type] == NSRightMouseDown){[self cvSendMouseEvent:event type:CV_EVENT_RBUTTONDOWN flags:CV_EVENT_FLAG_RBUTTON];}
-	if([event type] == NSRightMouseUp)	{[self cvSendMouseEvent:event type:CV_EVENT_RBUTTONUP   flags:CV_EVENT_FLAG_RBUTTON];}
-	if([event type] == NSOtherMouseDown){[self cvSendMouseEvent:event type:CV_EVENT_MBUTTONDOWN flags:0];}
-	if([event type] == NSOtherMouseUp)	{[self cvSendMouseEvent:event type:CV_EVENT_MBUTTONUP   flags:0];}
-	if([event type] == NSMouseMoved)	{[self cvSendMouseEvent:event type:CV_EVENT_MOUSEMOVE   flags:0];}
-	if([event type] == NSLeftMouseDragged)	{[self cvSendMouseEvent:event type:CV_EVENT_MOUSEMOVE   flags:0];}
-	if([event type] == NSRightMouseDragged)	{[self cvSendMouseEvent:event type:CV_EVENT_MOUSEMOVE   flags:0];}
+		
+	int flags = 0;
+	if([event modifierFlags] & NSShiftKeyMask)		flags &= CV_EVENT_FLAG_SHIFTKEY;
+	if([event modifierFlags] & NSControlKeyMask)	flags &= CV_EVENT_FLAG_CTRLKEY;
+	if([event modifierFlags] & NSAlternateKeyMask)	flags &= CV_EVENT_FLAG_ALTKEY;
+		
+	if([event type] == NSLeftMouseDown)	{[self cvSendMouseEvent:event type:CV_EVENT_LBUTTONDOWN flags:flags & CV_EVENT_FLAG_LBUTTON];}
+	if([event type] == NSLeftMouseUp)	{[self cvSendMouseEvent:event type:CV_EVENT_LBUTTONUP   flags:flags & CV_EVENT_FLAG_LBUTTON];}
+	if([event type] == NSRightMouseDown){[self cvSendMouseEvent:event type:CV_EVENT_RBUTTONDOWN flags:flags & CV_EVENT_FLAG_RBUTTON];}
+	if([event type] == NSRightMouseUp)	{[self cvSendMouseEvent:event type:CV_EVENT_RBUTTONUP   flags:flags & CV_EVENT_FLAG_RBUTTON];}
+	if([event type] == NSOtherMouseDown){[self cvSendMouseEvent:event type:CV_EVENT_MBUTTONDOWN flags:flags];}
+	if([event type] == NSOtherMouseUp)	{[self cvSendMouseEvent:event type:CV_EVENT_MBUTTONUP   flags:flags];}
+	if([event type] == NSMouseMoved)	{[self cvSendMouseEvent:event type:CV_EVENT_MOUSEMOVE   flags:flags];}
+	if([event type] == NSLeftMouseDragged)	{[self cvSendMouseEvent:event type:CV_EVENT_MOUSEMOVE   flags:flags];}
+	if([event type] == NSRightMouseDragged)	{[self cvSendMouseEvent:event type:CV_EVENT_MOUSEMOVE   flags:flags];}
 }
 - (void)keyDown:(NSEvent *)theEvent {
-	if([theEvent modifierFlags] &  NSCommandKeyMask)
-		[application terminate:self];
 	[super keyDown:theEvent];
 }
 - (void)mouseMoved:(NSEvent *)theEvent {
