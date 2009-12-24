@@ -40,30 +40,12 @@
 //M*/
 
 #import <Cocoa/Cocoa.h>
-
 #include "_highgui.h"
-#include <unistd.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <cmath>
-#include <iostream>
-using namespace std;
 
-#define Assert(exp)                                             \
-if( !(exp) )                                                    \
-{                                                               \
-    printf("Assertion: %s  %s: %d\n", #exp, __FILE__, __LINE__);\
-    assert(exp);                                                \
-}
-
-struct CvWindow;
-struct CvTrackbar;
-
-static NSApplication *application;
-static NSAutoreleasePool *pool;
-static NSMutableDictionary *windows;
-
-bool static wasInitialized = false;
+static NSApplication *application = nil;
+static NSAutoreleasePool *pool = nil;
+static NSMutableDictionary *windows = nil;
+static bool wasInitialized = false;
 
 @interface CVView : NSView {
 	NSImage *image;
@@ -76,12 +58,16 @@ bool static wasInitialized = false;
 	NSSlider *slider;
 	NSTextField *name;
 	int *value;
+	void *userData;
 	CvTrackbarCallback callback;
+	CvTrackbarCallback2 callback2;
 }
 @property(assign) NSSlider *slider;
 @property(assign) NSTextField *name;
 @property(assign) int *value;
+@property(assign) void *userData;
 @property(assign) CvTrackbarCallback callback;
+@property(assign) CvTrackbarCallback2 callback2;
 @end
 
 @interface CVWindow : NSWindow {
@@ -149,7 +135,6 @@ CVWindow *cvGetWindow(const char *name) {
 	return (CVWindow *)[windows valueForKey:cvname];
 }
 
-// TODO: implement missing functionality
 CV_IMPL int cvStartWindowThread()
 {
     return 0;
@@ -255,7 +240,14 @@ CV_IMPL int cvCreateTrackbar2(const char* trackbar_name,
                               CvTrackbarCallback2 on_notify2,
                               void* userdata)
 {
-	return -1;
+	int res = cvCreateTrackbar(trackbar_name, window_name, val, count, NULL);
+	if(res) {
+		CVSlider *slider = [[cvGetWindow(window_name) sliders] valueForKey:[NSString stringWithFormat:@"%s", trackbar_name]];
+		[slider setCallback2:on_notify2];
+		[slider setUserData:userdata];
+	}
+	
+	return res;
 }
 
 
@@ -575,13 +567,16 @@ CvVideoWriter* cvCreateVideoWriter_QT ( const char* filename, int fourcc,
 @synthesize slider;
 @synthesize name;
 @synthesize value;
+@synthesize userData;
 @synthesize callback;
+@synthesize callback2;
 
 - (id)init {
 	[super init];
 
 	callback = NULL;
 	value = NULL;
+	userData = NULL;
 
 	[self setFrame:NSMakeRect(0,0,200,25)];
 
@@ -613,6 +608,8 @@ CvVideoWriter* cvCreateVideoWriter_QT ( const char* filename, int fourcc,
 - (void)sliderChanged:(NSNotification *)notification {
 	if(callback)
 		callback([slider intValue]);
+	if(callback2)
+		callback2([slider intValue], userData);
 }
 
 @end
