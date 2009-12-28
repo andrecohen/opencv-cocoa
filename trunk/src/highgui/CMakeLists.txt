@@ -117,11 +117,12 @@ if(APPLE)
         add_definitions(-DHAVE_IMAGEIO=1)
     endif()
 
-	#if(QT_FOUND)
-	#	set(highgui_srcs ${highgui_srcs} cvcap_qt.cpp)
-	#endif()
-	
-    set(highgui_srcs ${highgui_srcs} window_cocoa.mm)
+	if(${CMAKE_SYSTEM_PROCESSOR} MATCHES "x86_64")
+		set(highgui_srcs ${highgui_srcs} cvcap_qt.mm window_cocoa.mm)
+	else()
+		set(highgui_srcs ${highgui_srcs} cvcap_qt.cpp window_carbon.cpp)
+	endif()
+
 endif(APPLE)
 
 source_group("Src" FILES ${highgui_srcs} ${highgui_hdrs})
@@ -206,7 +207,12 @@ if(WIN32)
 endif()
 
 if(APPLE)
-	target_link_libraries(${the_target} "-lbz2 -framework Cocoa -framework CoreFoundation  -framework QuartzCore")
+	if(${CMAKE_SYSTEM_PROCESSOR} MATCHES "x86_64")
+		target_link_libraries(${the_target} "-framework QTKit -lbz2 -framework Cocoa")
+	else()
+		target_link_libraries(${the_target} "-framework Quicktime -framework Carbon")
+	endif()
+	target_link_libraries(${the_target} "-framework CoreFoundation  -framework QuartzCore")
 endif()
 
 install(TARGETS ${the_target}

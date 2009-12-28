@@ -246,7 +246,6 @@ CV_IMPL int cvCreateTrackbar2(const char* trackbar_name,
 		[slider setCallback2:on_notify2];
 		[slider setUserData:userdata];
 	}
-	
 	return res;
 }
 
@@ -382,21 +381,6 @@ CV_IMPL int cvWaitKey (int maxWait)
 	return 0;
 }
 
-CvCapture * cvCreateFileCapture_QT (const char* filename)
-{
-	return NULL;
-}
-
-CvCapture * cvCreateCameraCapture_QT  (const int index)
-{
-	return NULL;
-}
-
-CvVideoWriter* cvCreateVideoWriter_QT ( const char* filename, int fourcc,
-                                        double fps, CvSize frameSize, int is_color ) {
-											return NULL;
-}
-
 @implementation CVWindow 
 
 @synthesize mouseCallback;
@@ -495,12 +479,12 @@ CvVideoWriter* cvCreateVideoWriter_QT ( const char* filename, int fourcc,
 }
 
 - (void)setImageData:(CvArr *)arr {
-	CvMat *cvimage, stub;
+	CvMat *arrMat, *cvimage, stub;
 	 
-	cvimage = cvGetMat( arr, &stub );
+	arrMat = cvGetMat(arr, &stub);
 	
-	cvCreateMat( cvimage->rows, cvimage->cols, CV_8UC3);
-	cvConvertImage(arr, cvimage, CV_CVTIMG_SWAP_RB );
+	cvimage = cvCreateMat(arrMat->rows, arrMat->cols, CV_8UC3);
+	cvConvertImage(arrMat, cvimage, CV_CVTIMG_SWAP_RB);
 	
 	CGColorSpaceRef colorspace = NULL;
     CGDataProviderRef provider = NULL;
@@ -514,7 +498,7 @@ CvVideoWriter* cvCreateVideoWriter_QT ( const char* filename, int fourcc,
       
     provider = CGDataProviderCreateWithData(NULL, cvimage->data.ptr, width * height , NULL );
       
-	CGImageRef imageRef = CGImageCreate( width, height, size , size*nbChannels , cvimage->step, colorspace,  kCGImageAlphaNone , provider, NULL, true, kCGRenderingIntentDefault );
+	CGImageRef imageRef = CGImageCreate(width, height, size , size*nbChannels , cvimage->step, colorspace,  kCGImageAlphaNone , provider, NULL, true, kCGRenderingIntentDefault);
 	
 	NSBitmapImageRep *bitmap = [[[NSBitmapImageRep alloc] initWithCGImage:imageRef] autorelease];
 	if(image) {
@@ -523,7 +507,8 @@ CvVideoWriter* cvCreateVideoWriter_QT ( const char* filename, int fourcc,
 	image = [[NSImage alloc] init];
 	[image addRepresentation:bitmap];
 	
-    CGDataProviderRelease( provider );
+    CGDataProviderRelease(provider);
+	cvReleaseMat(&cvimage);
 }
 
 - (void)setFrameSize:(NSSize)size {

@@ -174,6 +174,14 @@ set(ENABLE_OPENMP ${DEFAULT_ENABLE_OPENMP} CACHE BOOL "")
 if(CMAKE_COMPILER_IS_GNUCXX)
     set(ENABLE_PROFILING OFF CACHE BOOL "Enable profiling in the GCC compiler (Add flags: -g -pg)")
     set(USE_OMIT_FRAME_POINTER ON CACHE BOOL "Enable -fomit-frame-pointer for GCC")
+
+	if(APPLE)
+		execute_process(COMMAND sysctl -n hw.optional.x86_64 OUTPUT_VARIABLE APPLE_ARCH)
+		if(${APPLE_ARCH} MATCHES "1")
+			set(CMAKE_SYSTEM_PROCESSOR "x86_64")
+		endif()
+	endif()
+
     if(${CMAKE_SYSTEM_PROCESSOR} MATCHES arm*)
         # We can use only -O2 because the -O3 causes gcc crash
         set(USE_O2 ON CACHE BOOL "Enable -O2 for GCC")
@@ -217,6 +225,8 @@ if(CMAKE_COMPILER_IS_GNUCXX)
         set(USE_SSE3 OFF CACHE BOOL "Enable SSE3 for GCC")
 	# SSE/SSE2 might probably be not available for some old AMD or VIA processors
     endif ()
+
+	
 endif()
 
 # allow fine grained control over which libraries not to link, even if
