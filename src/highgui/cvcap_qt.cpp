@@ -59,7 +59,6 @@
 #include <cassert>
 
 // Mac OS includes
-#include <Carbon/Carbon.h>
 #include <CoreFoundation/CoreFoundation.h>
 #include <QuickTime/QuickTime.h>
 

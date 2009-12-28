@@ -207,7 +207,7 @@ CV_IMPL CvCapture * cvCreateCameraCapture (int index)
 		#endif
 
 		#ifdef HAVE_QUICKTIME
-		case CV_CAP_QT:
+			case CV_CAP_QT:
 			capture = cvCreateCameraCapture_QT (index);
 			if (capture)
 				return capture;
