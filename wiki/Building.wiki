@@ -1,0 +1,20 @@
+Instructions on how to build OpenCV 2.0 with Cocoa/Quicktime support
+
+
+== Requirements ==
+
+  * Snow Leopard (for now)
+  * XCode 3.x
+  * CMake
+
+== Instructions ==
+
+{{{
+$ ccmake -G "Unix Makefiles"
+$ make
+$ make install
+}}}
+
+
+== Notes ==
+By default Cocoa will be used over Carbon. When Cococa is used by default the code will be build for x86_64. This means that other extensions such as Python and FFMpeg may stop working. (This can be fixed if 64bit versions of these libraries is installed). 
