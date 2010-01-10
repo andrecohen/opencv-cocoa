@@ -175,10 +175,15 @@ if(CMAKE_COMPILER_IS_GNUCXX)
     set(ENABLE_PROFILING OFF CACHE BOOL "Enable profiling in the GCC compiler (Add flags: -g -pg)")
     set(USE_OMIT_FRAME_POINTER ON CACHE BOOL "Enable -fomit-frame-pointer for GCC")
 
+	set(WITH_COCOA ON CACHE BOOL "Enable Cococa framework")
+	set(WITH_CARBON OFF CACHE BOOL "Enable Carbon framework")
+	
 	if(APPLE)
-		execute_process(COMMAND sysctl -n hw.optional.x86_64 OUTPUT_VARIABLE APPLE_ARCH)
-		if(${APPLE_ARCH} MATCHES "1")
+		if(WITH_COCOA)
 			set(CMAKE_SYSTEM_PROCESSOR "x86_64")
+		endif()
+		if(WITH_CARBON)
+			set(CMAKE_SYSTEM_PROCESSOR "i386")
 		endif()
 	endif()
 
