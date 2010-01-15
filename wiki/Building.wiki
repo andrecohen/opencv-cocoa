@@ -9,12 +9,20 @@ Instructions on how to build OpenCV 2.0 with Cocoa/Quicktime support
 
 == Instructions ==
 
+Checkout the latest source code.
+
 {{{
-$ ccmake -G "Unix Makefiles"
+$ svn checkout http://opencv-cocoa.googlecode.com/svn/trunk/ opencv-cocoa
+}}}
+
+Enter the opencv-cocoa directory and start building!
+
+{{{
+$ cd opencv-cocoa
+$ cmake -G "Unix Makefiles"
 $ make
 $ make install
 }}}
 
-
 == Notes ==
-By default Cocoa will be used over Carbon. When Cococa is used by default the code will be build for x86_64. This means that other extensions such as Python and FFMpeg may stop working. (This can be fixed if 64bit versions of these libraries is installed). 
+By default Cocoa will be used over Carbon. Currently the library is compiled with the settings that cmake has by default, this means that it most likely will build a 32bit version of OpenCV. 64bit is still difficult to use since most people have only 32bit versions of ffmpeg, python, and etc&.
