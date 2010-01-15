@@ -3,7 +3,7 @@ Instructions on how to build OpenCV 2.0 with Cocoa/Quicktime support
 
 == Requirements ==
 
-  * Snow Leopard (for now)
+  * OSX 10.5 or 10.6
   * XCode 3.x
   * CMake
 
