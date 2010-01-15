@@ -114,7 +114,7 @@
 \****************************************************************************************/
 
 /* this function is used to set some external parameters in case of X Window */
-CVAPI(int) cvInitSystem( int argc, char** argv, int (*callback)(int,char**) = NULL );
+CVAPI(int) cvInitSystem( int argc, char** argv, int (*callback)(int,char**) CV_DEFAULT(NULL) );
 
 CVAPI(int) cvStartWindowThread();
 

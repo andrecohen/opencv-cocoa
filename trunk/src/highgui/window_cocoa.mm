@@ -350,7 +350,8 @@ CV_IMPL int cvNamedWindow( const char* name, int flags )
 	[window setHasShadow:YES];
 	[window setAcceptsMouseMovedEvents:YES];
 	[window useOptimizedDrawing:YES];
-	[window setAllowsConcurrentViewDrawing:YES];
+	// Not supported in 10.5:
+	//[window setAllowsConcurrentViewDrawing:YES];
 	[window setTitle:windowName];
 	[window makeKeyAndOrderFront:nil];
 
@@ -392,7 +393,7 @@ CV_IMPL int cvWaitKey (int maxWait)
 	NSPoint mp = [NSEvent mouseLocation];
 	NSRect visible = [[self contentView] frame];
 	visible.origin = self.frame.origin;
-	if(CGRectContainsPoint(visible, mp)) {
+	if(CGRectContainsPoint(*((CGRect*)&visible), *((CGPoint*)&mp))) {
 		mp.x -= self.frame.origin.x;
 		mp.y = [[self contentView] frame].size.height - (mp.y - self.frame.origin.y);
 		mouseCallback(type, mp.x, mp.y-1, flags, mouseParam);
