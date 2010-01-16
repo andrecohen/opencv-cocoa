@@ -374,7 +374,7 @@ CV_IMPL int cvWaitKey (int maxWait)
 		
 		event = [application currentEvent];
 		if([event type] == NSKeyDown) {
-			return [event keyCode];
+			return [[event characters] characterAtIndex:0];
 		}
 		[NSThread sleepForTimeInterval:1/100.];
 	}
