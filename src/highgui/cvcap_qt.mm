@@ -281,8 +281,8 @@ bool CvCaptureCAM::grabFrame(double timeOut) {
 		loopUntil = [NSDate dateWithTimeIntervalSinceNow:sleepTime]; 
 	
 	[localpool drain];
-	return total <= timeOut; 
-	
+
+	return total <= timeOut; 	
 }
 
 IplImage* CvCaptureCAM::retrieveFrame() {
@@ -535,7 +535,6 @@ didDropVideoFrameWithSampleBuffer:(QTSampleBuffer *)sampleBuffer
 }
 
 -(int) updateImage {
-	
 	if (newFrame==0) return 0; 
 	CVPixelBufferRef pixels; 
 	
