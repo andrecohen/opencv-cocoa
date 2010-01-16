@@ -274,12 +274,13 @@ bool CvCaptureCAM::grabFrame(double timeOut) {
 	NSAutoreleasePool* localpool = [[NSAutoreleasePool alloc] init];
 	double sleepTime = 0.005; 
 	double total = 0; 
+
 	NSDate *loopUntil = [NSDate dateWithTimeIntervalSinceNow:sleepTime];
 	while (![capture updateImage] && (total += sleepTime)<=timeOut &&
 		   [[NSRunLoop currentRunLoop] runMode: NSDefaultRunLoopMode 
 									beforeDate:loopUntil])
 		loopUntil = [NSDate dateWithTimeIntervalSinceNow:sleepTime]; 
-	
+
 	[localpool drain];
 
 	return total <= timeOut; 	

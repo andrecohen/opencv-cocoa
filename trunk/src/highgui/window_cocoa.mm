@@ -350,8 +350,6 @@ CV_IMPL int cvNamedWindow( const char* name, int flags )
 	[window setHasShadow:YES];
 	[window setAcceptsMouseMovedEvents:YES];
 	[window useOptimizedDrawing:YES];
-	// Not supported in 10.5:
-	//[window setAllowsConcurrentViewDrawing:YES];
 	[window setTitle:windowName];
 	[window makeKeyAndOrderFront:nil];
 
@@ -510,6 +508,8 @@ CV_IMPL int cvWaitKey (int maxWait)
 	
     CGDataProviderRelease(provider);
 	cvReleaseMat(&cvimage);
+	
+	[self setNeedsDisplay:YES];
 }
 
 - (void)setFrameSize:(NSSize)size {
