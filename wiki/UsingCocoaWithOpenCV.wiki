@@ -5,9 +5,7 @@ Cocoa is very strict about how it operates. This means there are some changes wh
  # Your code must run from a secondary thread.
  # Your code should be inside a Cocoa Application (not a terminal application)
 
-Aside from the above details it all works exactly the same way.
-
-Note: While OpenCV compiles and mostly works with a terminal application, it is by chance. Apple does not guarantee results when this is done.
+_Note: While OpenCV compiles and mostly works with a terminal application, it is by chance. Apple does not guarantee results when this is done._
 
 = Skeleton of an OpenCV/Cocoa project = 
 
