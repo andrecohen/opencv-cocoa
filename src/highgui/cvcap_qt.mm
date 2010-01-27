@@ -205,7 +205,12 @@ private:
 
 
 CvCapture* cvCreateFileCapture_QT(const char* filename) {
-	return cvCaptureFromFile(filename);
+	CvCaptureFile *retval = new CvCaptureFile(filename);
+	
+	if(retval->didStart())
+		return retval;
+	delete retval;
+	return NULL;
 }
 
 CvCapture* cvCreateCameraCapture_QT(int index ) {
