@@ -985,3 +985,4 @@ message(STATUS "")
 #   Generate the OpenCVConfig.cmake file for unix
 #      installation in CMAKE_INSTALL_PREFIX
 #----------------------------------------------------------------------------
+

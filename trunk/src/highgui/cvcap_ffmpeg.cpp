@@ -1062,8 +1062,11 @@ bool CvVideoWriter_FFMPEG::writeFrame( const IplImage * image )
     }
 
 	// check if buffer sizes match, i.e. image has expected format (size, channels, bitdepth, alignment)
-	assert (image->imageSize == avpicture_get_size( input_pix_fmt, image->width, image->height ));
-
+	// Fails to compile in Debug mode
+	#ifndef NDEBUG
+		assert (image->imageSize == avpicture_get_size( input_pix_fmt, image->width, image->height ));
+	#endif
+	
 	if ( c->pix_fmt != input_pix_fmt ) {
 		assert( input_picture );
 		// let input_picture point to the raw data buffer of 'image'
