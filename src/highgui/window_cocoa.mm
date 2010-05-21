@@ -84,6 +84,7 @@ static bool wasInitialized = false;
 - (void)cvSendMouseEvent:(NSEvent *)event type:(int)type flags:(int)flags;
 - (void)cvMouseEvent:(NSEvent *)event;
 - (void)createSliderWithName:(const char *)name maxValue:(int)max value:(int *)value callback:(CvTrackbarCallback)callback;
+- (void)setContentsSize:(NSSize)size;
 @end
 
 struct cvMainUserArguments {
@@ -165,9 +166,7 @@ CV_IMPL void cvShowImage( const char* name, const CvArr* arr)
 	if(window) {
 		[[window contentView] setImageData:(CvArr *)arr];
 		if([window autosize]) {
-			NSRect rect = [window frame];
-			rect.size = [[[window contentView] image] size];
-			[window setFrame:rect display:YES];
+			[window setContentSize:[[[window contentView] image] size]];
 		} else {
 			[window display];
 		}
@@ -179,10 +178,8 @@ CV_IMPL void cvResizeWindow( const char* name, int width, int height)
 {
 	CVWindow *window = cvGetWindow(name);
 	if(window) {
-		NSRect frame = [window frame];
-		frame.size.width = width;
-		frame.size.height = height;
-		[window setFrame:frame display:YES];
+		NSSize size = NSMakeSize(width, height);
+		[window setContentsSize:size];
 	}
 }
 
@@ -485,6 +482,26 @@ CV_IMPL int cvWaitKey (int maxWait)
 	return (CVView*)[super contentView];
 }
 
+- (void)setContentsSize:(NSSize) size {
+	//Compute the total height of all sliders
+	int slidersHeight=0;
+	
+	for(NSString *key in [self sliders]) {
+		NSSlider *slider = [[self sliders] valueForKey:key];
+		NSRect r = [slider frame];
+		slidersHeight+=r.size.height;
+	}
+
+	size.height+=slidersHeight;
+	//Now compute the size of the frame for the given contents size
+	NSRect contents = [self contentRectForFrameRect:[self frame]];
+	contents.size = size;
+	[self setFrame:[self frameRectForContentRect:contents] display:YES];
+	
+	
+}
+
+
 @end
 
 @implementation CVView 
@@ -555,7 +572,7 @@ CV_IMPL int cvWaitKey (int maxWait)
 	
 	[super drawRect:rect];
 
-	NSRect imageRect = {{0,0}, {self.frame.size.width, self.frame.size.height-height-6}};
+	NSRect imageRect = {{0,0}, {self.frame.size.width, self.frame.size.height-height}};
 	
 	if(image != nil) {
 		[image drawInRect: imageRect

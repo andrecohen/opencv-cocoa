@@ -345,7 +345,7 @@ int CvCaptureCAM::startCaptureDevice(int cameraNum) {
 		}
 		device = [devices objectAtIndex:camNum] ;
 	} else {
-		device = [QTCaptureDevice defaultInputDeviceWithMediaType:QTMediaTypeVideo]  ;
+		device = NSArray* devices = [[[QTCaptureDevice inputDevicesWithMediaType:QTMediaTypeVideo] arrayByAddingObjectsFromArray:[QTCaptureDevice inputDevicesWithMediaType:QTMediaTypeMuxed]] retain];
 	}
 	int success; 
 	NSError* error; 
