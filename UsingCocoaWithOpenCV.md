@@ -1,0 +1,27 @@
+# Introduction #
+
+Cocoa is very strict about how it operates. This means there are some changes when using the HighGUI library with Cocoa.
+
+  1. Your code must run from a secondary thread.
+  1. Your code should be inside a Cocoa Application (not a terminal application)
+
+_Note: While OpenCV compiles and mostly works with a terminal application, it is by chance. Apple does not guarantee results when this is done._
+
+# Skeleton of an OpenCV/Cocoa project #
+
+```
+#include <opencv/cv.h>
+#include <opencv/highgui.h>
+
+int myCode(int argc, char *argv[]) {
+// Your actual code goes here
+}
+
+int main(int argc, char *argv[]) {
+return cvInitSystem(argc, argv, myCode);
+}
+```
+
+# Working example #
+
+A working example can be found under /samples/MacOSX-Cocoa It is the adapted version of the original MacOSX example which does face tracking using data from the default computer camera.
