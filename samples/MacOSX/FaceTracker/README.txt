@@ -14,7 +14,7 @@ OpenCV is a Private Framework:
 On Mac OS X the concept of Framework bundles is meant to simplify distribution of shared libraries, 
 accompanying headers and documentation. There are however to subtly different 'flavours' of 
 Frameworks: public and private ones. The public frameworks get installed into the Frameworks 
-diretories in /Library, /System/Library or ~/Library and are meant to be shared amongst 
+directories in /Library, /System/Library or ~/Library and are meant to be shared amongst 
 applications. The private frameworks are only distributed as parts of an Application Bundle. 
 This makes it easier to deploy applications because they bring their own framework invisibly to 
 the user. No installation of the framework is necessary and different applications can bring 
